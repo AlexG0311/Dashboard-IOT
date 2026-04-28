@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { NodeData, HistoricalPoint, SensorAlert, AlertSeverity } from '@/types/sensors';
 import { THRESHOLDS, CHART_CONFIG } from '@/constants/sensorConfig';
-import { generateMockReading, fetchHistory } from '@/services/sensorApi';
+import { fetchLatestReading, fetchHistory } from '@/services/sensorApi';
 import { useWebSocket } from './useWebSocket';
 
 interface UseSensorDataReturn {
@@ -15,7 +15,7 @@ interface UseSensorDataReturn {
   reconnect: () => void;
 }
 
-const MOCK_INTERVAL_MS = 5000;
+const POLL_INTERVAL_MS = 5000;
 
 /**
  * Main data hook — orchestrates WebSocket (real) or polling (mock) data
@@ -29,7 +29,7 @@ export function useSensorData(): UseSensorDataReturn {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const { connectionStatus, lastMessage, reconnect } = useWebSocket();
-  const isMockMode = !import.meta.env.VITE_WS_URL;
+  const isPollingMode = !import.meta.env.VITE_WS_URL;
   const mockIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── Threshold alert generator ──────────────────────────────────────────
@@ -80,26 +80,30 @@ export function useSensorData(): UseSensorDataReturn {
     const loadInitial = async () => {
       const h = await fetchHistory('mota1');
       setHistory(h);
-      if (isMockMode) applyReading(generateMockReading('mota1'));
+      if (isPollingMode) {
+        const latest = await fetchLatestReading('mota1');
+        applyReading(latest);
+      }
     };
     loadInitial();
-  }, [isMockMode, applyReading]);
+  }, [isPollingMode, applyReading]);
 
   // ── WebSocket messages (real mode) ──────────────────────────────────────
   useEffect(() => {
-    if (!isMockMode && lastMessage?.type === 'sensor_update') {
+    if (!isPollingMode && lastMessage?.type === 'sensor_update') {
       applyReading(lastMessage.payload as NodeData);
     }
-  }, [lastMessage, isMockMode, applyReading]);
+  }, [lastMessage, isPollingMode, applyReading]);
 
   // ── Mock polling (mock mode) ────────────────────────────────────────────
   useEffect(() => {
-    if (!isMockMode) return;
-    mockIntervalRef.current = setInterval(() => {
-      applyReading(generateMockReading('mota1'));
-    }, MOCK_INTERVAL_MS);
+    if (!isPollingMode) return;
+    mockIntervalRef.current = setInterval(async () => {
+      const latest = await fetchLatestReading('mota1');
+      applyReading(latest);
+    }, POLL_INTERVAL_MS);
     return () => { if (mockIntervalRef.current) clearInterval(mockIntervalRef.current); };
-  }, [isMockMode, applyReading]);
+  }, [isPollingMode, applyReading]);
 
   return {
     node,
