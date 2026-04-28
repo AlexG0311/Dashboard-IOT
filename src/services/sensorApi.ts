@@ -83,7 +83,7 @@ export async function fetchLatestReading(nodeId: NodeId = 'mota1'): Promise<Node
 /**
  * Fetch historical readings from API.
  */
-export async function fetchHistory(nodeId: NodeId = 'mota1', points?: number): Promise<HistoricalPoint[]> {
+export async function fetchHistory(_nodeId: NodeId = 'mota1', points?: number): Promise<HistoricalPoint[]> {
   try {
     const response = await fetch(`${API_BASE}/sensores`);
     if (!response.ok) {
