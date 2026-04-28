@@ -1,8 +1,6 @@
 import { NodeData, NodeId, HistoricalPoint } from '@/types/sensors';
 import { CHART_CONFIG } from '@/constants/sensorConfig';
 
-const API_BASE = 'http://localhost:3000';
-
 // ─── API Response Types ──────────────────────────────────────────────────────
 
 interface SensorReading {
@@ -61,7 +59,7 @@ function transformToHistoricalPoint(reading: SensorReading): HistoricalPoint {
  */
 export async function fetchLatestReading(nodeId: NodeId = 'mota1'): Promise<NodeData> {
   try {
-    const response = await fetch(`${API_BASE}/sensores`);
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/sensores`);
     if (!response.ok) {
       throw new Error(`API error: ${response.statusText}`);
     }
@@ -85,7 +83,7 @@ export async function fetchLatestReading(nodeId: NodeId = 'mota1'): Promise<Node
  */
 export async function fetchHistory(_nodeId: NodeId = 'mota1', points?: number): Promise<HistoricalPoint[]> {
   try {
-    const response = await fetch(`${API_BASE}/sensores`);
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/sensores`);
     if (!response.ok) {
       throw new Error(`API error: ${response.statusText}`);
     }
