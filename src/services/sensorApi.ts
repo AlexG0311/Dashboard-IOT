@@ -39,7 +39,7 @@ function transformToNodeData(reading: SensorReading, nodeId: NodeId = 'mota1'): 
       airHumidity:    safeFloat(reading.humedad_ambiente),
     },
     ds18b20: {
-      soilTemperature: safeFloat(reading.temperatura_suelo),
+      soilTemp:     safeFloat(reading.temperatura_suelo),
     },
     soilMoisture: {
       moisturePercent: soilMoist,
@@ -55,7 +55,7 @@ function transformToHistoricalPoint(reading: SensorReading): HistoricalPoint {
   return {
     timestamp:    new Date(reading.time).toISOString(),
     airTemp:      safeFloat(reading.temperatura_ambiente),
-    soilTemperature: safeFloat(reading.temperatura_suelo),
+    soilTemp:     safeFloat(reading.temperatura_suelo),
     airHumidity:  safeFloat(reading.humedad_ambiente),
     soilMoisture: Math.max(0, Math.min(100, reading.humedad_suelo ?? 0)),
   };
