@@ -8,6 +8,7 @@ interface SensorReading {
   humedad_suelo: number | null;
   riego_activo: number;
   temperatura_ambiente: number | null;
+  temperatura_suelo: number |null;
   time: number;
 }
 
