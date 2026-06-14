@@ -39,7 +39,7 @@ function transformToNodeData(reading: SensorReading, nodeId: NodeId = 'mota1'): 
       airHumidity:    safeFloat(reading.humedad_ambiente),
     },
     ds18b20: {
-      soilTemperature: 0, // Not provided by API
+      soilTemperature: safeFloat(reading.temperatura_suelo),
     },
     soilMoisture: {
       moisturePercent: soilMoist,
