@@ -12,7 +12,7 @@ interface SensorReading {
   time: number;
 }
 
-// ─── Utilities ───────────────────────────────────────────────────────────────
+// ─── Utilities ─────────────────────────────────────────────────────────────
 /**
  * Safely parses a number to fixed decimals.
  * Returns fallback if value is null, undefined or non-finite.
@@ -39,7 +39,7 @@ function transformToNodeData(reading: SensorReading, nodeId: NodeId = 'mota1'): 
       airHumidity:    safeFloat(reading.humedad_ambiente),
     },
     ds18b20: {
-      soilTemp:     safeFloat(reading.temperatura_suelo),
+      soilTemperature:     safeFloat(reading.temperatura_suelo),
     },
     soilMoisture: {
       moisturePercent: soilMoist,
@@ -61,7 +61,7 @@ function transformToHistoricalPoint(reading: SensorReading): HistoricalPoint {
   };
 }
 
-// ─── Data Fetchers ──────────────────────────────────────────────────────────
+// ─── Data Fetchers ────────────────────────────────────────────────────────────
 /**
  * Fetch latest sensor reading from API.
  */
