@@ -55,7 +55,7 @@ function transformToHistoricalPoint(reading: SensorReading): HistoricalPoint {
   return {
     timestamp:    new Date(reading.time).toISOString(),
     airTemp:      safeFloat(reading.temperatura_ambiente),
-    soilTemp:     0, // Not provided by API
+    soilTemperature: safeFloat(reading.temperatura_suelo),
     airHumidity:  safeFloat(reading.humedad_ambiente),
     soilMoisture: Math.max(0, Math.min(100, reading.humedad_suelo ?? 0)),
   };
